@@ -1,0 +1,27 @@
+##write a script to check the disk usage and send an alert if it was above 80%#################33
+#!/bin/bash
+THRESHOLD=80
+ALERT_TRIGGERED=0
+TO="admin@example.com"
+SUBJECT="Disk space alert on $(hostname)"
+EMAIL_CMD=$(command -v mail)
+ALERT_FILE=$(mktemp)
+df -H --output=target,pcent | tail -n +2 |while read -r line; do
+ MOUNT=$(echo $line | awk '{print $1}')
+ USAGE=$(echo $line | awk '{print $2}' | tr -d '%')
+   if [ "$USAGE" -ge "$THRESHOLD" ]; then
+       ALERT_TRIGGERED=1
+         echo "WARNING: ${MOUNT} is at ${USAGE}% usage." >> "$ALERT_FILE"
+   fi
+done  
+if [ "$ALERT_TRIGGERED" -eq 1 ]; then
+  if [ -n "$EMAIL_CMD" ]; then
+    cat "$ALERT_FILE" | mail -s "$SUBJECT" "$TO"
+  else
+    echo "Mail command not found. Install 'mailutils' or 'mailx'."
+  fi
+fi
+
+rm -f "$ALERT_FILE" 
+
+
