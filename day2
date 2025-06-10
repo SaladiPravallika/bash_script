@@ -13,3 +13,28 @@ for file in "$path"/*.txt; do
     echo "No log files in directory"
   fi
 done
+##############################################################################################
+##############################################################################################
+#!/bin/bash
+read -p "Enter your source directory path: " source
+read -p "Enter your archive directory path: " archive
+#######source Directory does not exist"
+if [ ! -d "$source" ]; then
+  echo "source directory does not exist"
+  exit 1
+fi
+############archive directory doesnot exists##############
+if [ ! -d "$archive" ];then
+  echo "Archive directory does not exists"
+  mkdir -p "$archive"
+fi
+echo "Listing all the files which are modified more than 7 days ago..."
+file_count=$(find "$source" -maxdepth 1 -type f -mtime +7 | wc -l)
+
+if [ "$file_count" -eq 0 ]; then
+  echo "No files older than 7 days found in $source"
+else
+  echo "$file_count file(s) found. Archiving them to $archive..."
+  find "$source" -maxdepth 1 -type f -mtime +7 -exec mv {} "$archive" \;
+  echo "Files archived successfully."
+fi
