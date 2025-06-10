@@ -1,0 +1,15 @@
+#!/bin/bash
+read -p "Enter your directory path: " path
+if [ ! -d "$path" ]; then
+ echo "Directory does not exist"
+ exit 1
+fi
+for file in "$path"/*.txt; do
+  if [ -f "$file" ]; then
+    line_count=$(wc -l < "$file")
+    echo "Log file : $(basename "$file") - $line_count lines"
+    echo "processing $file"
+  else
+    echo "No log files in directory"
+  fi
+done
