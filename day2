@@ -38,3 +38,33 @@ else
   find "$source" -maxdepth 1 -type f -mtime +7 -exec mv {} "$archive" \;
   echo "Files archived successfully."
 fi
+
+####################################################################################################################################################
+##################################################################################################################################
+#!/bin/bash
+
+# List of services
+services=("nginx" "sshd" "cron")
+
+echo "Checking status of list of services"
+
+for service in "${services[@]}"; do
+  # Check if the service exists
+  if systemctl list-unit-files | grep -q "^${service}.service"; then
+    status=$(systemctl is-active "$service")
+
+    if [ "$status" != "active" ]; then
+      echo "Attempting to start $service"
+      if sudo systemctl start "$service"; then
+        echo "$service started successfully"
+      else
+        echo "❌ Failed to start $service"
+      fi
+    else
+      echo "$service is running"
+    fi
+  else
+    echo "❌ $service.service does not exist on this system"
+  fi
+done
+
