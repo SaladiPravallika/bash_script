@@ -9,3 +9,36 @@ check_user_exists() {
 
 read -p "Enter you username: " name
 check_user_exists "$name"
+----------------------------------------------------------------------------------------------------------------------
+######################################################################################################################
+#!/bin/bash
+
+greet_user() {
+  echo "How many users do you want to enter: "
+  read count
+
+  # Create an empty array
+  names=()
+
+  # Read names into the array
+  for (( i=1; i<=count; i++ )); do
+    read -p "Enter name #$i: " name
+    names+=("$name")
+  done
+
+  # Sort the names alphabetically
+  sorted_array=($(printf "%s\n" "${names[@]}" | sort))
+
+  echo ""
+  echo "Greeting users in alphabetical order:"
+  for name in "${sorted_array[@]}"; do
+    echo "Welcome - $name"
+  done
+
+  echo ""
+  echo "You have greeted ${#names[@]} people!"
+}
+
+# Call the function
+greet_user
+
